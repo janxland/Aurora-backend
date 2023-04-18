@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aurora.mapper.GetMapper">
+    <select id="getTotal" resultType="int">
+    	{CALL getTotal(#{point,mode=IN},#{key,mode=IN})}
+    </select>
+    <select id="getShow" resultType="Map" timeout="5">
+        {CALL getShows(#{point,mode=IN},#{type,mode=IN},#{start,mode=IN},#{num,mode=IN})}
+    </select>
+    <select id="getShowByIds" resultType="Map">
+        {CALL getShowsByIds(#{point,mode=IN},#{ids,mode=IN})}
+    </select>
+    
+    <select id="getXShow" resultType="Map" timeout="10">
+        {CALL getShows(#{point,mode=IN},#{type,mode=IN},#{start,mode=IN},#{num,mode=IN},#{adm,mode=IN})}
+    </select>
+    <select id="getWork" resultType="Map">
+       select * from ${point} WHERE id = #{id}
+    </select>
+    <update id="clickWork">
+    	UPDATE ${point} SET plays=plays+1 WHERE id = #{id}
+    </update>
+    <select id="getUser" resultType="Map">
+       {CALL getUsermore(#{id,mode=IN})}
+    </select>
+    <select id="getUserAttr" resultType="Map">
+       {CALL getUserAttr(#{id,mode=IN},#{act,mode=IN})}
+    </select>
+    
+    <resultMap id="main" type="Map"/>
+    <resultMap id="info" type="Map"/>
+    <select id="searchWork" resultMap="main,info" timeout="5">
+       {CALL Search${point}(#{type,mode=IN},#{start,mode=IN},#{num,mode=IN},#{author,mode=IN},#{keys,mode=IN})}
+    </select>
+    <select id="getKeywords" resultType="Map">
+       	SELECT keyword as 'key',plays,time from keywords where keyword LIKE CONCAT("%",#{key,mode=IN},'%')  ORDER BY  plays LIMIT #{start,mode=IN},#{num,mode=IN};
+    </select>
+	<insert id="setKeywords">
+		INSERT keywords(keyword) VALUES(#{key}) ON DUPLICATE KEY UPDATE  plays = plays+1;
+	</insert>
+	<select id="getComments" resultType="Map">
+       {CALL getComments(#{type,mode=IN},#{wid,mode=IN},#{fid,mode=IN},#{start,mode=IN},#{num,mode=IN})}
+    </select>
+	<select id="getDanmus" resultType="Map">
+       {CALL getDanmus(#{wid,mode=IN},#{start,mode=IN},#{num,mode=IN})}
+    </select>
+</mapper>

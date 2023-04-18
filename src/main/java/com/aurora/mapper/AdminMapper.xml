@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aurora.mapper.AdminMapper">
+	<!-- admin业务 -->
+   <select id="AdminLogin" resultType="Map" parameterType="com.aurora.entity.User">
+   		{CALL AdminLogin(#{id,mode=IN},#{password,mode=IN})}
+   </select>
+   <select id="AdminRegist" resultType="Map" parameterType="com.aurora.entity.User">
+   		{CALL AdminRegist(#{password,mode=IN},#{name,mode=IN})}
+   </select>
+    <select id="actAdmins" resultType="java.util.Map">
+    	{CALL actAdmins(#{fid,mode=IN},#{tid,mode=IN},#{act,mode=IN})}
+    </select>
+    <update id="updateAdmin" parameterType="java.util.Map">
+    	UPDATE Admins
+    	<set>
+			<foreach collection="paramMap.entrySet()" item="value" index="key" separator=",">
+            ${key}=#{value}
+            </foreach>
+    	</set> 
+    	WHERE id=#{id}
+    </update>
+    <update id="updateAdminSafe" parameterType="java.util.Map">
+    	UPDATE Admins_safety
+    	<set>
+			<foreach collection="paramMap.entrySet()" item="value" index="key" separator=",">
+            ${key}=#{value}
+            </foreach>
+    	</set> 
+    	WHERE id=#{id}
+    </update>
+    <select id="setAdminPassword" parameterType="java.util.Map" resultType="int">
+    	{CALL setAdminPassword(#{id,mode=IN},#{fpassword,mode=IN},#{npassword,mode=IN})}
+    </select>
+ 	<select id="callSql" resultType="java.util.Map">
+ 		${sql}
+ 	</select>
+
+
+
+	<!-- Work业务 -->
+    <update id="createWork"  parameterType="java.util.Map">
+		INSERT INTO ${extraMap.point} 
+		<foreach collection="paramMap.entrySet()" item="value" index="key" open="(" close=")" separator=",">${key}</foreach>
+			values
+		<foreach collection="paramMap.entrySet()" item="value" index="key" open="(" close=");" separator=",">#{value}</foreach>
+		UPDATE users_more SET wnum = wnum+1 WHERE id = ${paramMap.author};
+		UPDATE users_more SET works = CONCAT("${extraMap.pint}",LAST_INSERT_ID(),",",users_more.works) WHERE id = ${paramMap.author};
+    </update>
+	<update id="updateWork" parameterType="java.util.Map">
+		UPDATE ${point}
+		<set>
+			<foreach collection="paramMap.entrySet()" item="value" index="key" separator=",">
+			${key}=#{value}
+			</foreach>
+		</set> 
+		WHERE id=#{wid};
+	</update>
+	<update id="hideWork"  parameterType="java.util.Map">
+		UPDATE ${point} SET adm = 404
+		<where>
+			<foreach collection="paramMap.entrySet()" item="value" index="key" separator=",">
+			${key}=#{value}
+			</foreach>
+		</where> 
+	</update>
+	<delete id="deleteWork"  parameterType="java.util.Map">
+		{CALL delWork(${extraMap.point},${extraMap.id},${extraMap.author})}
+	</delete>
+</mapper>

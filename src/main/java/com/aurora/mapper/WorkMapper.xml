@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aurora.mapper.WorkMapper">
+    <update id="updateWork" parameterType="java.util.Map">
+    	UPDATE ${point}
+    	<set>
+			<foreach collection="paramMap.entrySet()" item="value" index="key" separator=",">
+            ${key}=#{value}
+            </foreach>
+    	</set> 
+    	WHERE id=#{wid} AND author=#{uid};
+    </update>
+    <update id="deleteWork"  parameterType="java.util.Map">
+    	UPDATE ${point} SET adm = 404
+    	<where>
+			<foreach collection="paramMap.entrySet()" item="value" index="key" separator=",">
+            ${key}=#{value}
+            </foreach>
+    	</where>
+    	;
+    </update>
+    <select id="createWork"  parameterType="java.util.Map">
+        INSERT INTO ${extraMap.point} 
+        <foreach collection="paramMap.entrySet()" item="value" index="key" open="(" close=")" separator=",">${key}</foreach>
+        values
+        <foreach collection="paramMap.entrySet()" item="value" index="key" open="(" close=");" separator=",">#{value}</foreach>
+		UPDATE users_more SET works = CONCAT("${extraMap.pint}",LAST_INSERT_ID(),",",works) WHERE id = ${paramMap.author};
+		UPDATE users_more SET wnum = wnum+1 WHERE id = ${paramMap.author};
+    </select>
+    <select id="actWork" resultType="java.util.Map">
+    	{CALL act${point}(#{wid,mode=IN},#{uid,mode=IN},#{act,mode=IN})}
+    </select>
+    <select id="createComment"  resultType="java.util.Map">
+        {CALL createComment(#{wid,mode=IN},#{reply,mode=IN},#{author,mode=IN},#{content,mode=IN})}
+    </select>
+    <select id="createDanmu"  resultType="java.util.Map">
+        {CALL createDanmu(#{wid,mode=IN},#{uid,mode=IN},#{content,mode=IN},#{attr,mode=IN})}
+    </select>
+</mapper>

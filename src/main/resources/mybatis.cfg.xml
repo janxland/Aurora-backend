@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 为 JavaBean 起类别名 -->
+	<typeAliases>
+	    <!-- 指定一个包名起别名，将包内的 Java 类的类名作为类的类别名 -->
+	    <package name="entity" />
+	</typeAliases>
+       <!-- 配置 mybatis 运行环境 -->
+    <environments default="database1">
+        <environment id="database1">
+           <!-- type="JDBC" 代表直接使用 JDBC 的提交和回滚设置 -->
+            <transactionManager type="JDBC" />
+            <!-- POOLED 表示支持 JDBC 数据源连接池 -->
+            <!-- 数据库连接池，由 Mybatis 管理，数据库名是 mybatis，MySQL 用户名 root，密码为空 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver" />
+                <property name="url" value="jdbc:mysql://onecloud:3306/Aurora?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=Asia/Shanghai&amp;rewriteBatchedStatements=true&amp;allowMultiQueries=true" />
+                <property name="username" value="test" />
+                <property name="password" value="janx123666land" />
+                 <!-- 空闲时调用防超时-->
+				<property name="poolPingEnabled" value="true"/>
+                <property name="poolPingConnectionsNotUsedFor" value="3600000" />
+				<property name="poolPingQuery" value="select 1"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+    <!-- 通过 mapper 接口包加载整个包的映射文件 -->
+    	<package name="com/aurora/mapper" />
+	</mappers>
+</configuration>
